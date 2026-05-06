@@ -47,14 +47,6 @@
                 <label class="block text-black text-sm mb-1.5 font-medium">Confirm Password</label>
                 <input type="password" name="password_confirmation" class="w-full bg-white border border-gray-300 text-black px-4 py-2.5 outline-none rounded-xl text-sm placeholder-gray-400 focus:border-[#681CA3] focus:ring-1 focus:ring-[#681CA3] transition-all" placeholder="Confirm your Password here" required>
             </div>
-
-            <div>
-                <label class="block text-black text-sm mb-1.5 font-medium">Register As</label>
-                <select name="role" class="w-full bg-white border border-gray-300 text-black px-4 py-2.5 outline-none rounded-xl text-sm focus:border-[#681CA3] focus:ring-1 focus:ring-[#681CA3] transition-all" required>
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
             
             <div class="pt-4 flex justify-center">
                 <button type="submit" class="bg-[#681CA3] text-white px-16 py-3 rounded-lg font-medium shadow-md hover:opacity-90 transition-opacity">

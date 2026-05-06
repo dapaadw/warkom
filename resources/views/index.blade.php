@@ -137,13 +137,21 @@
         <!-- Product Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10">
             @foreach($products as $product)
-                <div class="group flex flex-col">
+                <div class="group flex flex-col {{ $product->stock == 0 ? 'grayscale opacity-75' : '' }}">
                     <!-- Image Area -->
                     <div class="bg-gray-200 aspect-[4/3] w-full rounded-md flex flex-col items-center justify-center mb-4 relative overflow-hidden">
                         @if($product->images && is_array($product->images) && count($product->images) > 0)
-                            <a href="{{ route('products.show', $product->id) }}"><img src="{{ asset('storage/' . $product->images[0]) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"></a>
+                            @if($product->stock > 0)
+                                <a href="{{ route('products.show', $product->id) }}"><img src="{{ asset('storage/' . $product->images[0]) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"></a>
+                            @else
+                                <img src="{{ asset('storage/' . $product->images[0]) }}" alt="{{ $product->name }}" class="w-full h-full object-cover cursor-not-allowed">
+                            @endif
                         @elseif($product->image)
-                            <a href="{{ route('products.show', $product->id) }}"><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"></a>
+                            @if($product->stock > 0)
+                                <a href="{{ route('products.show', $product->id) }}"><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"></a>
+                            @else
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover cursor-not-allowed">
+                            @endif
                         @else
                             <i class="fa-regular fa-image text-gray-400 text-3xl mb-2"></i>
                             <span class="text-gray-400 text-[10px] font-mono tracking-widest uppercase">Image</span>
@@ -154,6 +162,10 @@
                             <div class="absolute top-2 right-2 px-2 py-1 text-[10px] font-bold rounded shadow {{ $product->stock > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
                                 Stok: {{ $product->stock }}
                             </div>
+                        @elseif($product->stock == 0)
+                            <div class="absolute top-2 right-2 px-2 py-1 text-[10px] font-bold rounded shadow bg-red-600 text-white">
+                                Habis
+                            </div>
                         @endif
                     </div>
 
@@ -163,9 +175,15 @@
                         <p class="text-xs font-mono font-bold text-gray-900 mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                         
                         <div class="mt-auto space-y-2">
-                            <a href="{{ route('products.show', $product->id) }}" class="block w-full text-center py-2 border border-gray-400 text-gray-800 text-[10px] font-mono font-bold hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors uppercase">
-                                Lihat Detail
-                            </a>
+                            @if($product->stock > 0)
+                                <a href="{{ route('products.show', $product->id) }}" class="block w-full text-center py-2 border border-gray-400 text-gray-800 text-[10px] font-mono font-bold hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors uppercase">
+                                    Lihat Detail
+                                </a>
+                            @else
+                                <span class="block w-full text-center py-2 border border-gray-300 text-gray-400 text-[10px] font-mono font-bold cursor-not-allowed uppercase bg-gray-50">
+                                    Lihat Detail
+                                </span>
+                            @endif
                             
                             @if(auth()->check() && auth()->user()->role === 'admin')
                                 <div class="flex gap-2">
@@ -188,12 +206,18 @@
                                     </button>
                                 </div>
                             @elseif(auth()->check() && auth()->user()->role === 'user')
-                                <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="w-full text-center py-2 bg-green-600 text-white text-[10px] font-mono font-bold hover:bg-green-700 transition-colors uppercase">
-                                        + Keranjang
+                                @if($product->stock > 0)
+                                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center py-2 bg-green-600 text-white text-[10px] font-mono font-bold hover:bg-green-700 transition-colors uppercase">
+                                            + Keranjang
+                                        </button>
+                                    </form>
+                                @else
+                                    <button disabled class="w-full text-center py-2 bg-gray-400 text-white text-[10px] font-mono font-bold cursor-not-allowed uppercase">
+                                        Stok Habis
                                     </button>
-                                </form>
+                                @endif
                             @endif
                         </div>
                     </div>

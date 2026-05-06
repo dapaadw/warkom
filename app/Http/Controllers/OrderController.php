@@ -91,6 +91,15 @@ class OrderController extends Controller
 
     public function success()
     {
-        return view('success');
+        $order = Order::where('user_id', Auth::id())
+            ->with('items.product')
+            ->latest()
+            ->first();
+
+        if (!$order) {
+            return redirect()->route('products.index');
+        }
+
+        return view('success', compact('order'));
     }
 }
